@@ -5,8 +5,8 @@ module.exports = app => {
 
     router.get("/get", Categories.get);
     router.post("/create", Categories.create);
-    router.put("/edit", Categories.edit);
-    router.put("/delete", Categories.delete);
+    router.put("/edit/:id", Categories.edit);
+    router.put("/delete/:id", Categories.delete);
 
     app.use("/api/categories", router);
 }
