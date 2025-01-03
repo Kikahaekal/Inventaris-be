@@ -1,5 +1,5 @@
 const db = require("../models");
-const Categories = db.Categories;
+const Categories = db.Category;
 const Op = db.Sequelize.Op;
 
 exports.create = async (req, res) => {
@@ -14,7 +14,7 @@ exports.create = async (req, res) => {
 
     const new_category = { name };
 
-    await Categories.create({new_category}).then((result) => {
+    await Categories.create(new_category).then((result) => {
         res.status(200).send({
             success: true,
             message: "Kategori berhasil ditambahkan",
@@ -46,17 +46,30 @@ exports.get = async (req, res) => {
 exports.edit = async (req, res) => {
     let {id} = req.params;
 
-    await Categories.findByPk(id).then((result) => {
-        res.status(201).send({
-            success: true,
-            message: "Kategori ditemukan"
-        })
-    }).catch((err) => {
+    let { name } = req.body;
+
+    const category = await Categories.findByPk(id);
+
+    if(!category) {
         res.status(404).send({
             success: false,
             message: "Kategori tidak ditemukan"
         });
+    }
+    
+    await category.update({ name }).then((result) => {
+        res.status(201).send({
+            success: true,
+            message: "Kategori berhasil diubah",
+            data: result
+        })
+    }).catch((err) => {
+        res.status(400).send({
+            success: false,
+            message: "Kategori gagal diubah"
+        });
     });
+    
 }
 
 exports.delete = async (req, res) => {
