@@ -3,7 +3,7 @@ module.exports = app => {
 
     let router = require("express").Router();
 
-    router.get("/get", Categories.get);
+    router.get("/", Categories.get);
     router.post("/create", Categories.create);
     router.put("/edit/:id", Categories.edit);
     router.put("/delete/:id", Categories.delete);
