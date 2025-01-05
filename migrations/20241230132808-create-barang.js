@@ -11,17 +11,9 @@ module.exports = {
       },
       userId: {
         allowNull: false,
-        type: Sequelize.BIGINT,
+        type: Sequelize.INTEGER,
         references: {
           model: 'Users',
-          key: 'id'
-        }
-      },
-      categoryId: {
-        allowNull: false,
-        type: Sequelize.BIGINT,
-        references: {
-          model: 'Categories',
           key: 'id'
         }
       },

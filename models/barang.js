@@ -11,10 +11,19 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Barang.belongsToMany(models.Category, {
+        through: "BarangCategories", // Nama tabel pivot
+        as: "categories",
+        foreignKey: "barangId", // FK dari tabel Barang di tabel pivot
+        otherKey: "categoryId", // FK dari tabel Category di tabel pivot
+      });
+      Barang.belongsTo(models.Users, { as: 'users', foreignKey: 'userId' });
     }
   }
   Barang.init({
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    price: DataTypes.INTEGER,
+    stock: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Barang',
