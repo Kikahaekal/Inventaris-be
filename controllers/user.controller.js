@@ -79,6 +79,7 @@ exports.authentication = async (req, res) => {
     success: true,
     message: "Login berhasil",
     token: token,
+    userId: findUser.id
   });
 };
 
@@ -97,39 +98,39 @@ exports.logout = async (req, res) => {
   });
 };
 
-exports.getBarang = async (req, res) => {
-  let userId = req.params.id;
+// exports.getBarang = async (req, res) => {
+//   let userId = req.params.id;
 
-  try {
-    const result = await Users.findByPk(userId, {
-      attributes: ["username", "email", "address"],
-      include: [
-        {
-          model: Barang,
-          as: "barangs",
-          attributes: ["name", "price", "stock"],
-          include: [
-            {
-              model: Category,
-              as: "categories",
-              through: { attributes: [] },
-              attributes: ["id", "name"]
-            }
-          ]
-        }
-      ]
-    });
+//   try {
+//     const result = await Users.findByPk(userId, {
+//       attributes: ["username", "email", "address"],
+//       include: [
+//         {
+//           model: Barang,
+//           as: "barangs",
+//           attributes: ["name", "price", "stock"],
+//           include: [
+//             {
+//               model: Category,
+//               as: "categories",
+//               through: { attributes: [] },
+//               attributes: ["id", "name"]
+//             }
+//           ]
+//         }
+//       ]
+//     });
 
-    res.status(200).send({
-      success: true,
-      message: "Data berhasil ditemukan",
-      data: result,
-    });
-  } catch (error) {
-    res.status(400).send({
-      success: false,
-      message: "Data tidak ditemukan",
-      error: error.message,
-    });
-  }
-};
+//     res.status(200).send({
+//       success: true,
+//       message: "Data berhasil ditemukan",
+//       data: result,
+//     });
+//   } catch (error) {
+//     res.status(400).send({
+//       success: false,
+//       message: "Data tidak ditemukan",
+//       error: error.message,
+//     });
+//   }
+// };

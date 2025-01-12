@@ -101,3 +101,35 @@ exports.delete = async (req, res) => {
       });
     });
 };
+
+
+exports.get = async (req, res) => {
+  let userId = req.params.id;
+
+  try {
+    const result = await Barang.findAll({
+      where: {
+        userId: userId
+      }
+    });
+
+    if(!result) {
+      res.status(204).send({
+        succcess: false,
+        message: "Belum ada barang yang ditambahkan",
+        data: result
+      });
+    }
+
+    res.status(200).send({
+      succcess: true,
+      message: "List barang ditemukan",
+      data: result
+    });
+  } catch (error) {
+    res.status(500).send({
+      succcess: false,
+      message: "Internal Server Error"
+    })
+  }
+};

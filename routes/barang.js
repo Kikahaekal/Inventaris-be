@@ -1,8 +1,9 @@
 module.exports = app => {
     const Barang = require("../controllers/barang.controller")
 
-    let router = require("express").Router();;
+    let router = require("express").Router();
 
+    router.get("/get-barang/:id", Barang.get);
     router.post("/create", Barang.create);
     router.put("/edit", Barang.edit);
     router.delete("/delete", Barang.delete);
