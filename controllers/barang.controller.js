@@ -1,5 +1,5 @@
 const db = require("../models");
-const Barang = db.Barang;
+const {Barang, Category} = db;
 const Op = db.Sequelize.Op;
 
 exports.create = async (req, res) => {
@@ -110,26 +110,36 @@ exports.get = async (req, res) => {
     const result = await Barang.findAll({
       where: {
         userId: userId
-      }
+      },
+      attributes: ["id", "name", "price", "stock"],
+      include: [
+        {
+          model: Category,
+          as: "categories",
+          through: { attributes: [] },
+          attributes: ["id", "name"]
+        }
+      ]
     });
 
-    if(!result) {
-      res.status(204).send({
-        succcess: false,
+    if(result.length === 0) {
+      res.status(200).send({
+        success: false,
         message: "Belum ada barang yang ditambahkan",
-        data: result
+        data: []
       });
     }
 
     res.status(200).send({
-      succcess: true,
+      success: true,
       message: "List barang ditemukan",
       data: result
     });
   } catch (error) {
     res.status(500).send({
-      succcess: false,
-      message: "Internal Server Error"
+      success: false,
+      message: "Internal Server Error",
+      error: error.message
     })
   }
 };
