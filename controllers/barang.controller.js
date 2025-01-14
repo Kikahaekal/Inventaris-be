@@ -7,7 +7,7 @@ exports.create = async (req, res) => {
 
   if (!userId || !categoryIds || !name || !price || !stock) {
     res.status(400).send({
-      succcess: false,
+      success: false,
       message: "Periksa input anda kembali",
     });
   }
@@ -27,13 +27,13 @@ exports.create = async (req, res) => {
     }
 
     res.status(201).send({
-      succcess: true,
+      success: true,
       message: "Barang berhasil ditambahkan",
       data: result,
     });
   } catch (error) {
     res.status(400).send({
-      succcess: false,
+      success: false,
       message: "Barang gagal ditambahkan",
       err: error.message
     });
@@ -49,7 +49,7 @@ exports.edit = async (req, res) => {
 
   if (!barang) {
     res.status(404).send({
-      succcess: true,
+      success: true,
       message: "Barang tidak ditemukan",
     });
   }
@@ -66,14 +66,14 @@ exports.edit = async (req, res) => {
     .update(editedBarang)
     .then((result) => {
       res.status(200).send({
-        succcess: true,
+        success: true,
         message: "Barang berhasil di update",
         data: result,
       });
     })
     .catch((err) => {
       res.status(400).send({
-        succcess: true,
+        success: true,
         message: "Barang gagal di update",
         error: err,
       });
@@ -90,13 +90,13 @@ exports.delete = async (req, res) => {
   })
     .then((result) => {
       res.status(200).send({
-        succcess: true,
+        success: true,
         message: "Barang berhasil dihapus",
       });
     })
     .catch((err) => {
       res.status(404).send({
-        succcess: false,
+        success: false,
         message: "Barang tidak ditemukan",
       });
     });
@@ -143,3 +143,29 @@ exports.get = async (req, res) => {
     })
   }
 };
+
+exports.getById = async (req, res) => {
+  let barangId = req.params.id;
+
+  try {
+    const result = await Barang.findByPk(barangId);
+
+    if(result.length == 0) {
+      res.status(404).send({
+        success: false,
+        message: "Data barang tidak ada"
+      });
+    }
+
+    res.status(200).send({
+      success: true,
+      message: "Data barang ditemukan",
+      data: result
+    });
+  } catch (error) {
+    res.status(400).send({
+      success: false,
+      message: "Gagal mengambil data"
+    });
+  }
+}
