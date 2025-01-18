@@ -1,5 +1,5 @@
 const db = require("../models");
-const {Barang, Category} = db;
+const { Barang, Category, Transaksi } = db;
 const Op = db.Sequelize.Op;
 
 exports.create = async (req, res) => {
@@ -22,7 +22,7 @@ exports.create = async (req, res) => {
   try {
     const result = await Barang.create(newBarang);
 
-    if(categoryIds && categoryIds.length > 0) {
+    if (categoryIds && categoryIds.length > 0) {
       await result.setCategories(categoryIds);
     }
 
@@ -35,7 +35,7 @@ exports.create = async (req, res) => {
     res.status(400).send({
       success: false,
       message: "Barang gagal ditambahkan",
-      err: error.message
+      err: error.message,
     });
   }
 };
@@ -62,46 +62,44 @@ exports.edit = async (req, res) => {
     stock,
   };
 
-  await barang
-    .update(editedBarang)
-    .then((result) => {
-      res.status(200).send({
-        success: true,
-        message: "Barang berhasil di update",
-        data: result,
-      });
-    })
-    .catch((err) => {
-      res.status(400).send({
-        success: true,
-        message: "Barang gagal di update",
-        error: err,
-      });
+  try {
+    const result = await barang.update(editedBarang);
+
+    res.status(200).send({
+      success: true,
+      message: "Barang berhasil diperbarui",
+      data: result,
     });
+  } catch (error) {
+    res.status(400).send({
+      success: true,
+      message: "Barang gagal di update",
+      error: err,
+    });
+  }
 };
 
 exports.delete = async (req, res) => {
   let { id } = req.params;
 
-  await Barang.destroy({
-    where: {
-      id,
-    },
-  })
-    .then((result) => {
-      res.status(200).send({
-        success: true,
-        message: "Barang berhasil dihapus",
-      });
-    })
-    .catch((err) => {
-      res.status(404).send({
-        success: false,
-        message: "Barang tidak ditemukan",
-      });
+  try {
+    const result = await Barang.destroy({
+      where: {
+        id,
+      },
     });
-};
 
+    res.status(200).send({
+      success: true,
+      message: "Barang berhasil dihapus",
+    });
+  } catch (error) {
+    res.status(404).send({
+      success: false,
+      message: "Barang tidak ditemukan",
+    });
+  }
+};
 
 exports.get = async (req, res) => {
   let userId = req.params.id;
@@ -109,7 +107,7 @@ exports.get = async (req, res) => {
   try {
     const result = await Barang.findAll({
       where: {
-        userId: userId
+        userId: userId,
       },
       attributes: ["id", "name", "price", "stock"],
       include: [
@@ -117,30 +115,30 @@ exports.get = async (req, res) => {
           model: Category,
           as: "categories",
           through: { attributes: [] },
-          attributes: ["id", "name"]
-        }
-      ]
+          attributes: ["id", "name"],
+        },
+      ],
     });
 
-    if(result.length === 0) {
-      res.status(200).send({
+    if (result.length === 0) {
+      return res.status(200).send({
         success: false,
         message: "Belum ada barang yang ditambahkan",
-        data: []
+        data: [],
       });
     }
 
-    res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "List barang ditemukan",
-      data: result
+      data: result,
     });
   } catch (error) {
     res.status(500).send({
       success: false,
       message: "Internal Server Error",
-      error: error.message
-    })
+      error: error.message,
+    });
   }
 };
 
@@ -150,22 +148,22 @@ exports.getById = async (req, res) => {
   try {
     const result = await Barang.findByPk(barangId);
 
-    if(result.length == 0) {
+    if (result.length == 0) {
       res.status(404).send({
         success: false,
-        message: "Data barang tidak ada"
+        message: "Data barang tidak ada",
       });
     }
 
     res.status(200).send({
       success: true,
       message: "Data barang ditemukan",
-      data: result
+      data: result,
     });
   } catch (error) {
     res.status(400).send({
       success: false,
-      message: "Gagal mengambil data"
+      message: "Gagal mengambil data",
     });
   }
-}
+};

@@ -15,7 +15,7 @@ exports.create = async (req, res) => {
   const new_category = { name };
 
   try {
-    const result = Categories.create(new_category);
+    const result = await Categories.create(new_category);
     
     res.status(200).send({
       success: true,
@@ -32,7 +32,9 @@ exports.create = async (req, res) => {
 
 exports.get = async (req, res) => {
   try {
-    const result = Categories.findAll();
+    const result = await Categories.findAll({
+      attributes: ["id", "name"]
+    });
     
     if(result.length == 0) {
       res.status(404).send({
@@ -88,7 +90,7 @@ exports.delete = async (req, res) => {
   let { id } = req.params;
 
   try {
-    const result = Categories.destroy({
+    const result = await Categories.destroy({
       where: {
         id,
       }
