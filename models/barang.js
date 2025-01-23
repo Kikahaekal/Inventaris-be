@@ -17,6 +17,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "barangId", // FK dari tabel Barang di tabel pivot
         otherKey: "categoryId", // FK dari tabel Category di tabel pivot
       });
+      Barang.hasMany(models.Transaksi, {as: 'transaksi', foreignKey: 'barangId'});
       Barang.belongsTo(models.Users, { as: 'users', foreignKey: 'userId' });
     }
   }
