@@ -42,8 +42,8 @@ exports.create = async (req, res) => {
 exports.authentication = async (req, res) => {
   let { username, password } = req.body;
 
-  if (!username && !password) {
-    res.status(400).send({
+  if (!username || !password) {
+    return res.status(400).send({
       success: false,
       message: "Input tidak dapat kosong",
     });
@@ -56,7 +56,7 @@ exports.authentication = async (req, res) => {
   });
 
   if (!findUser) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
       message: `${username} tidak ditemukan`,
     });
@@ -65,9 +65,9 @@ exports.authentication = async (req, res) => {
   const checkPassword = await bycript.compare(password, findUser.password);
 
   if (!checkPassword) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
-      message: `password anda salah`,
+      message: `Password anda salah`,
     });
   }
 
@@ -75,13 +75,14 @@ exports.authentication = async (req, res) => {
     expiresIn: "5h",
   });
 
-  res.status(200).send({
+  return res.status(200).send({
     success: true,
     message: "Login berhasil",
     token: token,
     userId: findUser.id
   });
 };
+
 
 exports.logout = async (req, res) => {
   // Set cookie authToken dengan nilai kosong dan kedaluwarsa
