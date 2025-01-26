@@ -8,21 +8,21 @@ exports.create = async (req, res) => {
   const barang = await Barang.findByPk(barangId);
 
   if (!barang) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
       message: "Barang tidak ditemukan",
     });
   }
 
   if (barang.stock < goods_amount) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
       message: "Total barang yang dibeli melebihi stok",
     });
   }
 
   if (!barangId || !buyer_name || !goods_amount || !total_cost || !transaction_detail) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
       message: "Periksa kembali input anda",
     });
@@ -42,13 +42,13 @@ exports.create = async (req, res) => {
       stock: barang.stock - goods_amount,
     });
 
-    res.status(201).send({
+    return res.status(201).send({
       success: true,
       message: "Transaksi berhasil ditambahkan",
       data: result,
     });
   } catch (error) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
       message: "Transaksi gagal ditambahkan",
       error: error,
@@ -101,13 +101,13 @@ exports.get = async (req, res) => {
       })),
     }));
 
-    res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "Data transaksi ditemukan",
       data: data_transaksi,
     });
   } catch (error) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
       message: "Data transaksi gagal diambil",
     });
@@ -122,7 +122,7 @@ exports.edit = async (req, res) => {
   const transaksi = await Transaksi.findByPk(transaksiId);
   
   if(!transaksi && !barang) {
-    res.status(404).send({
+    return res.status(404).send({
       success: false,
       message: "Data barang dan transaksi tidak ditemukan"
     });
@@ -154,12 +154,12 @@ exports.edit = async (req, res) => {
       stock: stockBarang
     });
 
-    res.status(200).send({
+    return res.status(200).send({
       success: true,
       message: "Transaksi telah di update"
     });
   } catch (error) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
       message: "Transaksi gagal diperbarui"
     });

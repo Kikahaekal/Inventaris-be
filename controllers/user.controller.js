@@ -8,7 +8,7 @@ exports.create = async (req, res) => {
   let { username, email, password, address } = req.body;
 
   if (!username || !email || !password || !address) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
       message: "Input tidak dapat kosong",
     });
@@ -26,13 +26,13 @@ exports.create = async (req, res) => {
   try {
     const result = await Users.create(dataUser);
 
-    res.status(201).send({
+    return res.status(201).send({
       success: true,
       message: "Data berhasil ditambahkan",
       data: result,
     });
   } catch (error) {
-    res.status(400).send({
+    return res.status(400).send({
       success: false,
       message: `Data gagal ditambahkan, error: ${err}`,
     });
@@ -93,7 +93,7 @@ exports.logout = async (req, res) => {
     path: "/", // Berlaku untuk seluruh aplikasi
   });
 
-  res.status(200).send({
+  return res.status(200).send({
     success: true,
     message: "Logout berhasil",
   });
