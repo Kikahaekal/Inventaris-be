@@ -7,7 +7,7 @@ module.exports = app => {
     router.get("/data-barang/:id", Barang.getById);
     router.post("/create", Barang.create);
     router.put("/edit", Barang.edit);
-    router.delete("/delete", Barang.delete);
+    router.delete("/delete/:id", Barang.delete);
 
     app.use("/api/barang", router);
 }

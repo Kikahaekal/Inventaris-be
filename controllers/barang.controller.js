@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 exports.create = async (req, res) => {
   let { userId, categoryIds, name, price, stock } = req.body;
 
-  if (!userId || !categoryIds || !name || !price || !stock) {
+  if (!userId || !categoryIds || categoryIds.length === 0 || !name || !price || !stock) {
     return res.status(400).send({
       success: false,
       message: "Periksa input anda kembali",
@@ -23,7 +23,7 @@ exports.create = async (req, res) => {
     const result = await Barang.create(newBarang);
 
     if (categoryIds && categoryIds.length > 0) {
-      await result.setCategories(categoryIds);
+      await barang.setCategories(categoryIds);
     }
 
     return res.status(201).send({
@@ -43,7 +43,7 @@ exports.create = async (req, res) => {
 exports.edit = async (req, res) => {
   let id = req.params.id;
 
-  let { userId, categoryId, name, price, stock } = req.body;
+  let { userId, categoryIds, name, price, stock } = req.body;
 
   const barang = await Barang.findByPk(id);
 
@@ -56,7 +56,6 @@ exports.edit = async (req, res) => {
 
   const editedBarang = {
     userId,
-    categoryId,
     name,
     price,
     stock,
@@ -64,6 +63,10 @@ exports.edit = async (req, res) => {
 
   try {
     const result = await barang.update(editedBarang);
+
+    if (categoryIds && categoryIds.length > 0) {
+      await barang.setCategories(categoryIds);
+    }
 
     return res.status(200).send({
       success: true,
