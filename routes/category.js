@@ -4,6 +4,7 @@ module.exports = app => {
     let router = require("express").Router();
 
     router.get("/", Categories.get);
+    router.get("/:id", Categories.getById);
     router.post("/create", Categories.create);
     router.put("/edit/:id", Categories.edit);
     router.delete("/delete/:id", Categories.delete);

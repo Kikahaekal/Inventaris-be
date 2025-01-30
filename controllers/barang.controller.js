@@ -5,7 +5,7 @@ const Op = db.Sequelize.Op;
 exports.create = async (req, res) => {
   let { userId, categoryIds, name, price, stock } = req.body;
 
-  if (!userId || !categoryIds || categoryIds.length === 0 || !name || !price || !stock) {
+  if (!userId || !categoryIds || !name || !price || !stock) {
     return res.status(400).send({
       success: false,
       message: "Periksa input anda kembali",
@@ -23,7 +23,7 @@ exports.create = async (req, res) => {
     const result = await Barang.create(newBarang);
 
     if (categoryIds && categoryIds.length > 0) {
-      await barang.setCategories(categoryIds);
+      await result.setCategories(categoryIds);
     }
 
     return res.status(201).send({
@@ -32,6 +32,8 @@ exports.create = async (req, res) => {
       data: result,
     });
   } catch (error) {
+    console.log(error.message);
+
     return res.status(400).send({
       success: false,
       message: "Barang gagal ditambahkan",
@@ -49,7 +51,7 @@ exports.edit = async (req, res) => {
 
   if (!barang) {
     return res.status(404).send({
-      success: true,
+      success: false,
       message: "Barang tidak ditemukan",
     });
   }
@@ -64,7 +66,7 @@ exports.edit = async (req, res) => {
   try {
     const result = await barang.update(editedBarang);
 
-    if (categoryIds && categoryIds.length > 0) {
+    if (Array.isArray(categoryIds) && categoryIds.length > 0) {
       await barang.setCategories(categoryIds);
     }
 

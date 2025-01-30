@@ -57,8 +57,7 @@ exports.get = async (req, res) => {
 };
 
 exports.edit = async (req, res) => {
-  let { id } = req.params;
-
+  let id = req.params.id;
   let { name } = req.body;
 
   const category = await Categories.findByPk(id);
@@ -114,3 +113,29 @@ exports.delete = async (req, res) => {
     });
   }
 };
+
+exports.getById = async (req, res) => {
+  let id = req.params.id;
+  
+  try {
+    const result = await Categories.findByPk(id);
+  
+    if(!result) {
+      return res.status(404).send({
+        success: false,
+        message: "Kategori tidak ditemukan"
+      });
+    }
+    
+    return res.status(200).send({
+      success: true,
+      message: "Kategori ditemukan",
+      data: result
+    });
+  } catch (error) {
+    return res.status(400).send({
+      success: false,
+      message: "Kategori gagal diambil"
+    });
+  }
+}
