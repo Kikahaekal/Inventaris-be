@@ -21,7 +21,7 @@ exports.create = async (req, res) => {
     });
   }
 
-  if (!barangId || !buyer_name || !goods_amount || !total_cost || !transaction_detail) {
+  if (!barangId || !buyer_name || !goods_amount || !transaction_detail) {
     return res.status(400).send({
       success: false,
       message: "Periksa kembali input anda",
@@ -69,6 +69,7 @@ exports.get = async (req, res) => {
         {
           model: Transaksi,
           as: "transaksi",
+          required: true,
           attributes: [
             "id",
             "barangId",
@@ -81,32 +82,20 @@ exports.get = async (req, res) => {
       ],
     });
 
-    // every untuk cek tiap barang (item) ada transaksinya yang bentuknya objek
-    if (result.length === 0 || result.every((item) => item.transaksi.length === 0)) {
+    if (result.length === 0) {
       return res.status(400).send({
         success: false,
         message: "Data transaksi belum ditambahkan",
       });
     }
 
-    const data_transaksi = result.map((data) => ({
-      name: data.name,
-      transaksi: data.transaksi.map((transaction) => ({
-        transaksiId: transaction.id,
-        barangId: transaction.barangId,
-        buyer_name: transaction.buyer_name,
-        goods_amount: transaction.goods_amount,
-        total_cost: transaction.total_cost,
-        transaction_detail: transaction.transaction_detail,
-      })),
-    }));
-
     return res.status(200).send({
       success: true,
       message: "Data transaksi ditemukan",
-      data: data_transaksi,
+      data: result,
     });
   } catch (error) {
+    // console.log(error);
     return res.status(400).send({
       success: false,
       message: "Data transaksi gagal diambil",
@@ -162,6 +151,66 @@ exports.edit = async (req, res) => {
     return res.status(400).send({
       success: false,
       message: "Transaksi gagal diperbarui"
+    });
+  }
+}
+
+exports.getById = async (req, res) => {
+  let barang_id = req.params.barangId;
+  let transaction_id = req.params.transactionId;
+
+  try {
+    const result = await Barang.findByPk(barang_id, {
+      attributes: ["name"],
+      include: [
+        {
+          model: Transaksi,
+          as: "transaksi",
+          attributes: [
+            "buyer_name",
+            "goods_amount",
+            "total_cost",
+            "transaction_detail",
+          ],
+          where: {
+            id: transaction_id
+          }
+        },
+      ]
+    });
+
+    return res.status(200).send({
+      success: true,
+      message: "Data transaksi ditemukan",
+      data: result
+    });
+    
+  } catch(error) {
+    return res.status(400).send({
+      success: false,
+      message: "Detail transaksi gagal ditemukan"
+    });
+  }
+}
+
+exports.delete = async (req, res) => {
+  let transaction_id = req.params.id;
+
+  try {
+    await Transaksi.destroy({
+      where: {
+        id: transaction_id
+      }
+    });
+
+    return res.status(200).send({
+      success: true,
+      message: "Barang berhasil dihapus"
+    });
+  } catch(error){
+    return res.status(500).send({
+      success: false,
+      message: "Data gagal dihapus"
     });
   }
 }
